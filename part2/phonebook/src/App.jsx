@@ -1,6 +1,32 @@
 import { useState } from 'react'
 
-const Numbers = ({persons}) => {
+const Filter = ({value, onChange}) => {
+  return (
+    <form>
+      <div>
+        filter shown with <input value={value} onChange={onChange} />
+      </div>
+    </form>
+  )
+}
+
+const PersonForm = ({onSubmit, nameValue, nameChange, numberValue, numberChange}) => {
+  return (
+    <form onSubmit={onSubmit}>
+      <div>
+        name: <input value={nameValue} onChange={nameChange}/>
+      </div>
+      <div>
+        number: <input value={numberValue} onChange={numberChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+     </form>
+  )
+}
+
+const Persons = ({persons}) => {
   return (
     <div>
       {persons.map(person =>
@@ -19,13 +45,14 @@ const App = () => {
     { name: 'Dan Abranov', number: '12-43-23454'},
     { name: 'Mary Poppendieck', number: '39-23-6423122'}
   ])
-  const [numbers, setNumbers] = useState([...persons])
+
+  const [filterNumbers, setFilterNumbers] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
-  const searchName = (search) => {
-    const searchResult = persons.filter(person => person.name.indexOf(search) !== -1)
-    setNumbers(searchResult)
+  const searchName = (filterNumbers) => {
+    const searchResult = persons.filter(person => person.name.indexOf(filterNumbers) !== -1)
+    return searchResult
   }
 
   const addName = (event) => {
@@ -48,24 +75,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          filter shown with <input onChange={event => searchName(event.target.value)} />
-        </div>
-      </form>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={event => setNewName(event.target.value)}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={event => setNewNumber(event.target.value)} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <Numbers persons={numbers} />
+      <Filter value={filterNumbers} onChange={event => setFilterNumbers(event.target.value)} />
+      <h3>add a new</h3>
+      <PersonForm
+      onSubmit={addName}
+      nameValue={newName}
+      nameChange={event => setNewName(event.target.value)}
+      numberValue={newNumber}
+      numberChange={event => setNewNumber(event.target.value)}
+      />
+      <h3>Numbers</h3>
+      <Persons persons={searchName(filterNumbers)} />
     </div>
   )
 }
