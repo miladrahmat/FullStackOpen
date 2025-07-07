@@ -76,7 +76,7 @@ const App = () => {
       alert(`${newNumber} is already added to phonebook`)
     }
     else {
-      setPersons([...persons, { name: newName, number: newNumber, id: setId }])
+      setPersons([...persons, { name: newName, number: newNumber, id: setId() }])
       setNewName('')
       setNewNumber('')
     }
