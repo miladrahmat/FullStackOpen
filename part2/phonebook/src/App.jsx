@@ -30,7 +30,7 @@ const Persons = ({persons}) => {
   return (
     <div>
       {persons.map(person =>
-        <p key={person.name}>
+        <p key={person.id}>
           {person.name} {person.number}
         </p>
       )}
@@ -40,10 +40,10 @@ const Persons = ({persons}) => {
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-532542'},
-    { name: 'Dan Abranov', number: '12-43-23454'},
-    { name: 'Mary Poppendieck', number: '39-23-6423122'}
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-532542', id: 2},
+    { name: 'Dan Abranov', number: '12-43-23454', id: 3},
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4}
   ])
 
   const [filterNumbers, setFilterNumbers] = useState('')
@@ -53,6 +53,16 @@ const App = () => {
   const searchName = (filterNumbers) => {
     const searchResult = persons.filter(person => person.name.indexOf(filterNumbers) !== -1)
     return searchResult
+  }
+
+  const setId = () => {
+    let id = 0
+    for (let i = 0; i < persons.length; i++) {
+      if (persons[i].id > id) {
+        id = persons[i].id
+      }
+    }
+    return (id + 1)
   }
 
   const addName = (event) => {
@@ -66,7 +76,7 @@ const App = () => {
       alert(`${newNumber} is already added to phonebook`)
     }
     else {
-      setPersons([...persons, { name: newName, number: newNumber }])
+      setPersons([...persons, { name: newName, number: newNumber, id: setId }])
       setNewName('')
       setNewNumber('')
     }
