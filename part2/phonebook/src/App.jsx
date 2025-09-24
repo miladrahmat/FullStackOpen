@@ -1,19 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-532542', id: 2},
-    { name: 'Dan Abranov', number: '12-43-23454', id: 3},
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4}
-  ])
-
+  const [persons, setPersons] = useState([])
   const [filterNumbers, setFilterNumbers] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+    .get('http://localhost:3001/persons')
+    .then(response => {
+      console.log('promise fulfilled')
+      console.log(response.data)
+      setPersons(response.data)
+    })
+  }, [])
 
   const searchName = (filterNumbers) => {
     const searchResult = persons.filter(person => person.name.indexOf(filterNumbers) !== -1)
