@@ -7,6 +7,7 @@ const App = () => {
   const [searchCountry, setSearchCountry] = useState('')
   const [foundCountries, setFoundCountries] = useState([])
   const [allCountries, setAllCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     console.log('Fetching all countries')
@@ -20,6 +21,7 @@ const App = () => {
   useEffect(() => {
     console.log('effect run, country is now', searchCountry)
 
+    setSelectedCountry(null)
     if (searchCountry !== '') {
       setFoundCountries(allCountries.filter((country) =>
         country.name.common.toLowerCase().includes(searchCountry.toLocaleLowerCase())
@@ -29,6 +31,12 @@ const App = () => {
       setFoundCountries([])
     }
   }, [searchCountry])
+
+  const showCountry = (name) => {
+    console.log('Clicked')
+    const toBeShownCountry = foundCountries.find(country => country.name.common === name)
+    setSelectedCountry(toBeShownCountry)
+  }
 
   return (
     <div>
@@ -40,8 +48,11 @@ const App = () => {
       </form>
       {foundCountries.length === 1 ?
       <OneCountry country={foundCountries[0]} />
-      :
-      <ListCountries countries={foundCountries} /> 
+      : (selectedCountry !== null ? 
+        <OneCountry country={selectedCountry} />
+        :
+        <ListCountries countries={foundCountries} showFunc={showCountry} />
+      )
       }
     </div>
   )
