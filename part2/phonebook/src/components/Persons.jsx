@@ -1,11 +1,17 @@
 
-const Persons = ({persons}) => {
+const Persons = ({persons, deleteFunc}) => {
   return (
 	<div>
 	  {persons.map(person =>
-		<p key={person.id}>
-		  {person.name} {person.number}
-		</p>
+	  <li key={person.id}>
+		{person.name} {person.number}
+		<button onClick={() => {
+			if (window.confirm(`Delete ${person.name}`))
+				deleteFunc(person.id)}
+		}>
+			delete
+		</button>
+	</li>
 	  )}
 	</div>
   )
