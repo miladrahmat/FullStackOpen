@@ -32,23 +32,6 @@ app.get('/api/persons', (request, response) => {
 	})
 })
 
-app.get('/api/persons/:id', (request, response) => {
-	Person.findById(request.params.id)
-	.then(person => {
-		response.json(person)
-	})
-	.catch(error => {
-		response.status(404).end()
-	})
-})
-
-app.delete('/api/persons/:id', (request, response) => {
-	Person.findByIdAndDelete(request.params.id)
-	.then(() => {
-		response.status(204).end()
-	})
-})
-
 app.post('/api/persons', (request, response) => {
 	const body = request.body
 
@@ -65,6 +48,66 @@ app.post('/api/persons', (request, response) => {
 		response.json(savedPerson)
 	})
 })
+
+app.get('/api/persons/:id', (request, response, next) => {
+	Person.findById(request.params.id)
+	.then(person => {
+		if (person) {
+			response.json(person)
+		} else {
+			response.status(404).end()
+		}
+	})
+	.catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+	const { name, number } = request.body
+	Person.findById(request.params.id)
+	.then(person => {
+		if (person) {
+			person.name = name
+			person.number = number
+
+			person.save().then(updatedPerson => {
+				response.json(updatedPerson)
+			})
+		} else {
+			response.status(404).end()
+		}
+	})
+	.catch(error => next(error))
+})
+
+app.delete('/api/persons/:id', (request, response, next) => {
+	Person.findByIdAndDelete(request.params.id)
+	.then(person => {
+		if (person) {
+			response.status(204).end()
+		} else {
+			response.status(404).end()
+		}
+	})
+	.catch(error => next(error))
+})
+
+const errorHandler = (error, request, response, next) => {
+	console.log(error)
+
+	if (error.name === 'CastError') {
+		return response.status(400).send({ error: 'malformatted id' })
+	}
+
+	next(error)
+}
+
+app.use(errorHandler)
+
+const unknownEndpoint = (request, response) => {
+	response.status(404).send({ error: 'unkown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT)
