@@ -13,9 +13,42 @@ mongoose.connect(url)
 	console.log('error connecting to MongoDB', error.message)
 })
 
+const numberLengthValidator = (num) => { return num.length >= 8 }
+
+const isDigit = (str) => {
+	for (let c of str) {
+		if (c < '0' || c > '9') {
+			return false
+		}
+	}
+	return true
+}
+
+const numberFormatValidator = (num) => {
+	if (num.search("-") === 2) {
+		return (isDigit(num.substring(0, 2)) && isDigit(num.substring(3)))
+	}
+	else if (num.search("-") === 3) {
+		return (isDigit(num.substring(0, 3)) && isDigit(num.substring(4)))
+	}
+	return false
+}
+
+const numberValidators = [
+	{ validator: numberLengthValidator, message: 'Number needs to be at least 8 digits' },
+	{ validator: numberFormatValidator, message: 'Incorrect format'}
+]
+
 const phonebookSchema = mongoose.Schema({
-	name: String,
-	number: String,
+	name: {
+		type: String,
+		minLength: 3,
+		required: true
+	},
+	number: {
+		type: String,
+		validate: numberValidators
+	}
 })
 
 phonebookSchema.set('toJSON', {
